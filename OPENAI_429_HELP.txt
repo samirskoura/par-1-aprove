@@ -65,7 +65,7 @@ own history; AI options also have a near-duplicate check. Length and internal-na
 checks still apply. HTTP 429
 is independent of those checks and can prevent OpenAI generation.
 
-80 is the maximum eligible unique Creatives per check, not a promised count.
+200 is the maximum eligible unique Creatives per check, not a promised count.
 Your selected squad contained only 28 Ads. Eligibility and each Creative's own
 history can reduce the edit count further. Keep the saved history.
 If one Creative exhausts its options, add new truthful product-relevant lines

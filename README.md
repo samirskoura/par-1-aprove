@@ -1,4 +1,60 @@
-# Snapchat complete headline bot — 80 Creatives
+# Snapchat complete headline bot — 200 Creatives
+
+This version builds the work list from your selected Ad Squads and fetches only
+their linked Creative IDs. Replace `snap_headline_bot.py` and the CONTENT of
+your active headline workflow with the supplied YAML. Keep its filename and
+concurrency group, your personal headline pool, encrypted state, and Secrets.
+Let the current check finish before stopping or replacing an active monitor.
+Start with test mode and one_check, then verify one live edit before overnight.
+The cap remains 200 and the pause remains 30 seconds after each completed check.
+Progress now appears during a check rather than only after the check finishes.
+
+## Selected Ad Squads and shared-Creative links
+
+Routine candidate reads use `/adsquads/{id}/ads`, then a read-only batch lookup
+of just the linked Creative IDs. The worker no longer downloads every Creative
+in your account. It verifies the returned Squad and account IDs before editing.
+
+A Creative can also be connected to an Ad in another Squad. Before the first
+eligible edit of each check, the worker still performs one account-wide Ad-link
+audit to discover those connections. Later edits request small pages of Ads
+sorted by `updated_at-desc`, keeping the first audit's watermark fixed throughout
+the check with a five-minute overlap, rather than
+downloading the complete account again. Known linked Ads and the Creative are
+read individually after each encrypted reservation and immediately before PATCH.
+No approval or pending decision relies on a cached pending/rejected status.
+
+An outside-Squad link blocks editing. Missing or unordered update timestamps
+cause a conservative fallback to complete link audits. Invalid/incomplete API
+responses stop edits. A cached deleted link can block an edit until the next
+check; it cannot authorize an edit. No link index is written to your saved state.
+
+This is not a zero-account-read mode: the shared-link check is necessary to avoid
+changing another Ad through a shared Creative. Account API reads are restricted
+to checking those links; only selected-Squad Creatives can be edit candidates.
+The API's ordering/indexing and the separate status-read/PATCH race remain
+limitations; no client-side polling can make linked-Ad checks atomic.
+
+The new batch Creative lookup and sorted change reads have offline coverage but
+have not been exercised with your live account. If Snapchat rejects a read,
+the job stops that check before further edits; keep the previous package version
+available while validating one preview and one live edit.
+
+## Update an existing bot to the 200 ceiling
+
+Replace only `snap_headline_bot.py` and your active headline-monitor workflow
+with `.github/workflows/snapchat-headline-editor.yml` from this package.
+If your workflow has a different filename, replace that file's content instead
+of adding a second workflow. Keep its existing concurrency group if it differs.
+Let an active job finish before installing the update.
+
+Keep your own `headline_pool.txt`, `state.json.enc`, Git history, and Secrets,
+including the encryption key belonging to that state. This update raises the
+limit; it does not reset state or repair a changed/lost encryption key.
+
+The workflow form still defaults to 80. Enter `max_updates = 200` to use the
+new ceiling. Preview with `run_mode = test` and `monitoring = one_check`, then
+use live mode when the target selection and count are correct.
 
 This package contains the full single-account bot, workflow, helper scripts and
 instructions. It supports 1–20 selected Ad Squads within one Ad Account. A squad
@@ -24,7 +80,7 @@ all linked live Ads to be `REJECTED`, the Creative to be `DISAPPROVED`, and ever
 linked Ad to belong to your selected squads. Approved, pending and unknown review
 statuses block the edit. Creatives shared with Ads outside the selection are skipped.
 
-Before each edit, the bot refreshes the account's Ad list, then reads each linked
+Before each edit, the bot refreshes shared-link information, then reads each linked
 Ad and the Creative again. It sends conditional tests for the Creative's review
 status and exact old headline in the same PATCH as the headline replacement.
 Failed or incomplete responses stop processing. It does not remove these tests
@@ -68,7 +124,7 @@ so the review protections can continue.
 
 ## One workflow run
 
-All 60-second checks in one overnight job share the same per-Creative used list.
+All checks in one overnight job share the same per-Creative used list.
 The list does not reset between checks. A new manual workflow run, a scheduled
 workflow run, or a re-run attempt starts fresh headline usage automatically.
 Approved/pending protections remain active across all of them.
@@ -104,18 +160,24 @@ resets headline usage without clearing approval or review records.
 
 | Setting | Behavior |
 | --- | --- |
-| `max_updates` | Up to 80 unique eligible Creatives across all selected squads per check |
-| Manual form default | 80; enter 60, 1, or another value within 1–80 |
+| `max_updates` | Up to 200 unique eligible Creatives across all selected squads per check |
+| Manual form default | 80; enter 200, 60, 1, or another value within 1–200 |
 | Scheduled fallback | 30 per check |
 | Per-Creative attempt limit | None; confirmed rejections can be retried while running |
-| Overnight mode | Waits 60 seconds after each completed check, for roughly 330 minutes |
+| Overnight mode | Waits 30 seconds after each completed check, for roughly 330 minutes |
 | Scheduled mode | Requests a run every five minutes when enabled; start times can be delayed |
 
 The ceiling is not a guaranteed edit count. Eligibility and suitable-headline
 availability determine the actual count. Status reads take time, particularly in
 large accounts. Checks therefore do not start exactly every minute. OpenAI
-generation requests contain at most 30 candidates each; 80 candidates use three
+generation requests contain at most 30 candidates each; 200 candidates use seven
 requests when all need generation.
+
+Edits and encrypted reservations run one at a time. A 200-Creative check can
+take substantially longer than an 80-Creative check. The 30-second monitor
+pause begins after the check finishes; it is not a promise of 200 edits per
+minute. A check already underway can run past the monitor's nominal deadline,
+and GitHub's job timeout still applies.
 
 ## New bot setup
 
@@ -190,7 +252,7 @@ OAuth app can authenticate a user with access to a partner account.
 9. Run the same target in `live`, `max_updates=1`, `monitoring=one_check`.
    Verify the one changed Creative in Snapchat and that `state.json.enc` was
    saved. This exercises the conditional PATCH, which a preview cannot validate.
-10. After that succeeds, use `live`, `max_updates=60` or `80`, and
+10. After that succeeds, use `live`, `max_updates=60`, `80` or `200`, and
     `monitoring=overnight`.
 
 For scheduled continuation, set `RUN_MODE=live` and `BOT_ENABLED=true`. Scheduled
@@ -254,7 +316,7 @@ the current monitor on exit code 78, without restarting the worker five times.
 See [OpenAI retry guidance](https://developers.openai.com/api/docs/guides/rate-limits).
 
 Scheduled jobs can still start later. Set `BOT_ENABLED=false` while resolving an
-account problem. The same 80-Creative ceiling and approved/pending protections
+account problem. The same 200-Creative ceiling and approved/pending protections
 apply. Every accepted headline still passes the existing fresh status checks
 after any OpenAI wait. Repeat checks use that Creative's usage in the current run;
 internal-name checks also remain active. A request failure aborts generation

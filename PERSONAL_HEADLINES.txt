@@ -33,7 +33,7 @@ For full replacement, follow REPLACE_ALL_FILES.txt.
 HOW YOUR LIST IS USED
 - Each eligible Creative gets a RANDOM suitable line from the headlines it has
   not already used during THIS workflow run. It does not follow file order.
-- All overnight checks belong to one run; usage does not reset every 60 seconds.
+- All overnight checks belong to one run; usage does not reset between checks.
 - Starting another workflow run resets headline usage automatically. Previously
   used lines become available again. Its current headline is still excluded.
 - Different Creatives can use the same line, including 10 or 80 at once.
@@ -65,7 +65,7 @@ Manual launches, scheduled launches and GitHub re-run attempts each start a new
 headline list. You do not need to delete any state file or change any Secret.
 
 800 headlines means 800 candidate options for each Creative. The separate limit
-of 80 is the maximum number of eligible Creatives edited in one check.
+of 200 is the maximum number of eligible Creatives edited in one check.
 
 SECRETS
 Manual mode needs your Snapchat credentials and the state encryption key.

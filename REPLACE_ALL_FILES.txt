@@ -51,13 +51,13 @@ No manual copying or editing of old source files is required.
    Encryption and target checks must pass. If candidates exist, the status
    protection message and WOULD UPDATE previews also appear.
    Confirm the new version and selection messages:
-   Bot version: 2026.09.13-random-per-workflow-run
+   Bot version: 2026.10.15-selected-squads
    Headline selection: RANDOM; no repeats per Creative within this workflow run; resets on a new run.
 
 9. Run one live check with max_updates=1 and monitoring=one_check. Verify the
    intended Creative in Snapchat and that state.json.enc is saved in GitHub.
    The live log must say: Encrypted headline reservation saved before edit.
-   After success, use max_updates=60 or 80 with monitoring=overnight.
+   After success, use max_updates=60, 80, or 200 with monitoring=overnight.
 
 Manual runs need no repository Variables. If old BOT_ENABLED=true and RUN_MODE=live
 Variables still exist, set BOT_ENABLED=false during installation. Optional

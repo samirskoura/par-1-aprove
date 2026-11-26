@@ -1,4 +1,29 @@
-SNAPCHAT COMPLETE BOT - REPLACE ALL OLD FILES - UP TO 80 CREATIVES
+SNAPCHAT COMPLETE BOT - UP TO 200 CREATIVES PER CHECK
+
+SELECTED-SQUAD READ UPDATE, 2026-10-15
+Replace snap_headline_bot.py and the CONTENT of your existing headline workflow
+with the supplied YAML. Keep the workflow filename and concurrency group.
+Keep your headline_pool.txt, encrypted history, Git history and matching key.
+The work list and Creative lookup use only your selected Ad Squads.
+One account-wide shared-link audit per check is still required before editing;
+later edits use smaller changed-link pages, with a full-audit fallback if needed.
+Approved/pending guards, review waits and encrypted reservations remain active.
+The cap is 200; the pause is 30 seconds after each finished check.
+Logs stream as processing continues. Test with one_check before live use.
+See README.md for the shared-Creative limitation and exact validation steps.
+
+UPGRADING ONLY THE LIMIT?
+Replace snap_headline_bot.py and the CONTENT of your active headline-monitor
+workflow with the supplied .github/workflows/snapchat-headline-editor.yml.
+Do not add another workflow if yours already uses a different filename.
+Keep your headline_pool.txt, encrypted state, Git history, and existing Secrets.
+Keep your current workflow concurrency group if it differs from the supplied one.
+The form still defaults to 80; enter max_updates=200 to use the higher ceiling.
+Start with run_mode=test and monitoring=one_check to preview the selected targets.
+A lost or changed state key must be resolved separately; this update does not
+decrypt unreadable saved history or clear any review protection.
+
+For a new installation or deliberate full-file replacement, see below.
 
 You can delete all old files and upload ALL files in this package, keeping your
 existing GitHub Secrets. Follow REPLACE_ALL_FILES.txt.
@@ -42,7 +67,7 @@ An existing valid refresh token can be used with its matching OAuth Client ID
 and Client Secret if its authorized user can access the target account.
 
 WHAT IS INCLUDED
-- Complete snap_headline_bot.py with the 80-Creative ceiling and status guards.
+- Complete snap_headline_bot.py with the 200-Creative ceiling and status guards.
 - GitHub Actions workflow in .github/workflows/snapchat-headline-editor.yml.
 - state_crypto.py and requirements.txt.
 - checkpoint_encrypted_state.py to save each planned headline before the edit.
@@ -73,7 +98,7 @@ Confirm this new log line:
 Headline selection: RANDOM; no repeats per Creative within this workflow run; resets on a new run.
 
 Then verify one live edit with max_updates=1 and monitoring=one_check.
-After that succeeds and encrypted state is saved, use max_updates=60 or 80.
+After that succeeds and encrypted state is saved, use max_updates=60, 80, or 200.
 
 WINDOWS HELPERS
 Extract the ZIP first. In File Explorer, open the extracted folder, click its
